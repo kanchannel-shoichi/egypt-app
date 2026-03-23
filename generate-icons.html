@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Icon Generator</title></head>
+<body style="background:#0e0c07;color:#C8A84B;font-family:sans-serif;padding:20px;">
+<h2>PWA Icon Generator</h2>
+<p>このページを開いて「Generate & Download」を押すと全サイズのアイコンが生成されます</p>
+<button id="btn" style="background:#C8A84B;color:#0e0c07;border:none;padding:12px 24px;font-size:14px;cursor:pointer;margin:16px 0;">
+  Generate & Download All Icons
+</button>
+<div id="preview" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;"></div>
+
+<script>
+const SIZES = [72, 96, 128, 144, 152, 192, 384, 512];
+
+function drawIcon(size) {
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  const cx = size / 2, cy = size / 2;
+
+  // Background
+  ctx.fillStyle = "#0e0c07";
+  ctx.fillRect(0, 0, size, size);
+
+  // Outer gold circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, size * 0.45, 0, Math.PI * 2);
+  ctx.strokeStyle = "#C8A84B";
+  ctx.lineWidth = size * 0.04;
+  ctx.stroke();
+
+  // Pyramid
+  const ph = size * 0.38;
+  const pw = size * 0.56;
+  const py = cy + size * 0.08;
+  ctx.beginPath();
+  ctx.moveTo(cx, py - ph);
+  ctx.lineTo(cx - pw/2, py);
+  ctx.lineTo(cx + pw/2, py);
+  ctx.closePath();
+  ctx.fillStyle = "#C8A84B";
+  ctx.globalAlpha = 0.9;
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  // Eye of Ra — ellipse
+  const ey = cy - size * 0.02;
+  ctx.beginPath();
+  ctx.ellipse(cx, ey, size * 0.13, size * 0.07, 0, 0, Math.PI * 2);
+  ctx.strokeStyle = "#0e0c07";
+  ctx.lineWidth = size * 0.025;
+  ctx.stroke();
+
+  // Pupil
+  ctx.beginPath();
+  ctx.arc(cx, ey, size * 0.04, 0, Math.PI * 2);
+  ctx.fillStyle = "#0e0c07";
+  ctx.fill();
+
+  // Teardrop lines
+  const lw = size * 0.015;
+  ctx.strokeStyle = "#0e0c07";
+  ctx.lineWidth = lw;
+  ctx.beginPath();
+  ctx.moveTo(cx - size*0.05, ey + size*0.05);
+  ctx.lineTo(cx - size*0.07, ey + size*0.12);
+  ctx.moveTo(cx, ey + size*0.07);
+  ctx.lineTo(cx, ey + size*0.14);
+  ctx.moveTo(cx + size*0.05, ey + size*0.05);
+  ctx.lineTo(cx + size*0.07, ey + size*0.12);
+  ctx.stroke();
+
+  return canvas;
+}
+
+document.getElementById("btn").onclick = () => {
+  const preview = document.getElementById("preview");
+  preview.innerHTML = "";
+  SIZES.forEach(size => {
+    const canvas = drawIcon(size);
+    preview.appendChild(canvas);
+
+    // Download
+    const a = document.createElement("a");
+    a.download = `icon-${size}.png`;
+    a.href = canvas.toDataURL("image/png");
+    a.click();
+  });
+  document.getElementById("btn").textContent = "✅ Done! icons フォルダに保存してください";
+};
+</script>
+</body>
+</html>
